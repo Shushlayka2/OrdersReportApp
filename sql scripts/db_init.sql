@@ -8,7 +8,7 @@ GO
 
 IF NOT EXISTS (SELECT 1 FROM sysobjects WHERE name = 'orders' and xtype = 'U')
 	CREATE TABLE Orders (
-		Id INT PRIMARY KEY IDENTITY,
+		Id UNIQUEIDENTIFIER PRIMARY KEY default NEWID(),
 		Price SMALLMONEY NOT NULL CHECK (Price >= 0),
 		Date DATE NOT NULL
 	)
@@ -16,7 +16,6 @@ GO
 
 --DML Section--
 BEGIN TRANSACTION
-DBCC CHECKIDENT ('Orders', RESEED, 0)
 DELETE Orders
 COMMIT
 GO
