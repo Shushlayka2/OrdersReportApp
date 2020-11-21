@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OrdersReportApp.Models.Order;
+using OrdersReportApp.Services;
 using System.Threading.Tasks;
 
 namespace OrdersReportApp.Controllers
@@ -7,9 +8,12 @@ namespace OrdersReportApp.Controllers
     public class OrdersController : Controller
     {
         protected IOrderDataAccess OrderDataAccess { get; }
-        public OrdersController(IOrderDataAccess orderDataAccess)
+        protected IOrdersReporter OrdersReporter { get; }
+
+        public OrdersController(IOrderDataAccess orderDataAccess, IOrdersReporter ordersReporter)
         {
             OrderDataAccess = orderDataAccess;
+            OrdersReporter = ordersReporter;
         }
 
         [HttpGet]
@@ -38,6 +42,5 @@ namespace OrdersReportApp.Controllers
             await OrderDataAccess.RemoveOrderAsync(order);
             return RedirectToAction("Index");
         }
-
     }
 }

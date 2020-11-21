@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<document>
+	<worksheets>
+		<worksheet name="Report">
+			<rows>
+				<row>
+					<headers>
+						<header></header>
+						<header span="3">Количество заказов с суммой</header>
+					</headers>
+				</row>
+				<row>
+					<headers>
+						<header>Дата</header>
+						<header>От 0 до 1000</header>
+						<header>От 1001 до 5000</header>
+						<header>От 5001</header>
+					</headers>
+				</row>
+			</rows>
+		</worksheet>
+	</worksheets>
+</document>
