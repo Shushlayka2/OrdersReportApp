@@ -5,6 +5,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="OrdersReportApp.Tests\**" />
+    <Content Remove="OrdersReportApp.Tests\**" />
+    <EmbeddedResource Remove="OrdersReportApp.Tests\**" />
+    <None Remove="OrdersReportApp.Tests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Services\pattern.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Services\pattern.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="EPPlus" Version="5.4.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.0">
@@ -15,6 +32,14 @@
 
   <ItemGroup>
     <Folder Include="Reports\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Services\OrdersReporter.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Include="Services\pattern.xml" />
   </ItemGroup>
 
 </Project>

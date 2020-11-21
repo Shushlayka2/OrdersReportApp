@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OrdersReportApp.Models.Order;
 using OrdersReportApp.Services;
+using OrdersReportApp.ViewModels;
 using System.Threading.Tasks;
 
 namespace OrdersReportApp.Controllers
 {
+    // TODO: Handle exception cases
     public class OrdersController : Controller
     {
         protected IOrderDataAccess OrderDataAccess { get; }
@@ -41,6 +43,13 @@ namespace OrdersReportApp.Controllers
         {
             await OrderDataAccess.RemoveOrderAsync(order);
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> UploadReport(ReportViewModel reportViewModel)
+        {
+            await OrdersReporter.CreateReportAsync(reportViewModel);
+            return Ok();
         }
     }
 }

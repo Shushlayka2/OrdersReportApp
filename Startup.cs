@@ -1,14 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using OrdersReportApp.Models.Order;
+using OrdersReportApp.Services;
 
 namespace OrdersReportApp
 {
@@ -25,6 +22,8 @@ namespace OrdersReportApp
         {
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(connection));
+            services.AddTransient<IOrderDataAccess, OrderDataAccess>();
+            services.AddTransient<IOrdersReporter, OrdersReporter>();
             services.AddControllersWithViews();
         }
 

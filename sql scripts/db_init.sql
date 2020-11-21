@@ -26,11 +26,11 @@ BEGIN TRANSACTION
 
 	DECLARE @from INT, @to INT  
 	SET @from = 0
-	SET @to = 25
+	SET @to = 300
 
 	WHILE @from < @to
 	BEGIN
-		INSERT INTO Orders (Price, Date) VALUES (RAND() * 1000, 
+		INSERT INTO Orders (Price, Date) VALUES (RAND() * 10000, 
 		DATEFROMPARTS(1950 + ROUND(RAND() * 70, 0), 1 + ROUND(RAND() * 11, 0), 1 + ROUND(RAND() * 27, 0)))
 		SET @from += 1
 	END
