@@ -7,7 +7,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OrdersReportApp.Models.Order;
 using OrdersReportApp.Services;
-using OrdersReportApp.Utilities.Logging;
 
 namespace OrdersReportApp
 {
@@ -40,7 +39,6 @@ namespace OrdersReportApp
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddFile(Configuration);
             if (Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
