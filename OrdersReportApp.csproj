@@ -6,9 +6,13 @@
 
   <ItemGroup>
     <Compile Remove="OrdersReportApp.Tests\**" />
+    <Compile Remove="wwwroot\lib\fontawesome\**" />
     <Content Remove="OrdersReportApp.Tests\**" />
+    <Content Remove="wwwroot\lib\fontawesome\**" />
     <EmbeddedResource Remove="OrdersReportApp.Tests\**" />
+    <EmbeddedResource Remove="wwwroot\lib\fontawesome\**" />
     <None Remove="OrdersReportApp.Tests\**" />
+    <None Remove="wwwroot\lib\fontawesome\**" />
   </ItemGroup>
 
   <ItemGroup>

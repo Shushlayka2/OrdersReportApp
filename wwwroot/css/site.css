@@ -19,34 +19,34 @@ body {
     margin: 20px 0 0 0;
 }
 
-#btn_line {
+#btn-line {
     margin: 20px 0 0 0;
 }
 
-#btn_line button {
+#btn-line button {
     margin: 0 20px 0 20px;
-    width: 170px
+    width: 170px;
 }
 
 #ordersTable_wrapper {
     margin: 30px 0 0 0;
 }
 
-.handling_col {
+.handling-col {
     display: flex;
     justify-content: space-around;
 }
 
 .fas {
-    cursor: pointer
+    cursor: pointer;
 }
 
 .fa-trash-alt {
-    color: red
+    color: red;
 }
 
 .fa-edit {
-    color: #007bff
+    color: #007bff;
 }
 
 .table-icon {

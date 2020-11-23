@@ -9,11 +9,11 @@ namespace OrdersReportApp.Tests
     // TODO: Add assert sections to tests for excluding part of selfhand testing 
     public class OrdersControllerTests : BaseTester
     {
-        public OrdersController Controller { get; set; }
+        public OrderController Controller { get; set; }
         public OrdersControllerTests()
             : base()
         {
-            Controller = Container.Resolve<OrdersController>();
+            Controller = Container.Resolve<OrderController>();
         }
 
         [Fact]

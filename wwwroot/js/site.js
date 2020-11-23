@@ -1,8 +1,12 @@
 ﻿var dataTable;
+var toastrTimeout = 2000;
+
+//---Table Configuration Section---
+
 $(document).ready(function () {
     dataTable = $("#ordersTable").DataTable({
         "ajax": {
-            "url": "/Orders/GetOrders",
+            "url": "/Order/GetOrders",
             "type": "GET",
             "datatype": "json"
         },
@@ -36,24 +40,22 @@ $(document).ready(function () {
         "columnDefs": [
             {
                 "targets": 1,
-                "render": $.fn.dataTable.render.moment('YYYY-MM-DDTHH:mm:ss', 'DD/MM/YYYY')
+                "render": $.fn.dataTable.render.moment("YYYY-MM-DDTHH:mm:ss", "DD/MM/YYYY")
             },
             {
                 "targets": 3,
                 "render": function () {
                     return `
-                    <div class='handling_col'>
+                    <div class="handling-col">
                         <button type="button" class="table-icon edit-btn" data-toggle="modal" data-target="#updatingModal">
-                            <i class='fas fa-edit'></i>
+                            <i class="fas fa-edit"></i>
                         </button>
                         <button class="table-icon remove-btn">
-                            <i class='fas fa-trash-alt'></i>
+                            <i class="fas fa-trash-alt"></i>
                         </button>
                     </div>`;
-                }
-            },
-            {
-                "orderable": false, "targets": 3
+                },
+                "orderable": false
             },
             {
                 "width": "40%", "targets": 0,
@@ -65,40 +67,39 @@ $(document).ready(function () {
     });
 });
 
-function formatDate(date) {
-    date = new Date(date);
-    let year = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(date);
-    let month = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(date);
-    let day = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(date);
-    return `${year}-${month}-${day}`
-}
+//---Validation Section---
 
 var oldPriceValue = "";
 var oldDateValue = "";
 
+//prevents connection to server if data hasn't changed
 function updateValidation($form) {
-    let newPriceValue = $form.find(`input[name=Price]`)[0].value;
-    let newDateValue = $form.find(`input[name=Date]`)[0].value;
+    let newPriceValue = $form.find("input[name=Price]")[0].value;
+    let newDateValue = $form.find("input[name=Date]")[0].value;
     if (oldDateValue == newDateValue && oldPriceValue == newPriceValue) {
-        toastr.warning("Новые значения не отличаются от старых", 'Неудачная операция', { timeOut: 2000 });
+        toastr.warning("Новые значения не отличаются от старых", "Неудачная операция", { timeOut: toastrTimeout });
         return false;
     }
     return true;
 }
 
+//palidations middleware
 function validator($form) {
     let isValid = true;
 
-    if ($form.closest('.modal').attr('id') == "updatingModal") {
+    //data changes control
+    if ($form.closest(".modal").attr("id") == "updatingModal") {
         isValid &= updateValidation($form);
     }
 
+    //price value has to be positive
     if ($form.find("input[name=Price]")[0].value < 0) {
-        $form.find(`input[name=Price]`)[0].classList.add("is-invalid");
-        $form.find("span.field-validation-valid[data-valmsg-for='Price']").text("Общая сумма не может быть отрицательной");
+        $form.find("input[name=Price]")[0].classList.add("is-invalid");
+        $form.find("span.field-validation-valid[data-valmsg-for='Price']").text("Cумма заказа не может быть отрицательной");
         isValid = false;
     }
 
+    //"required" attribute behavior handling
     $form.find("input[required]").each(function () {
         if (!this.value) {
             let name = $(this).attr("name");
@@ -111,17 +112,26 @@ function validator($form) {
     return isValid;
 }
 
-function on_error(resp) {
-    toastr.error('Не удается установить соединение с сервером.', 'Ошибка соединения с сервером', { timeOut: 2000 });
-}
-
-$(".modal").on('hidden.bs.modal', function () {
-    $(this).find("input.form-control").val('').end();
-    $(this).find('input.form-control').each(function () { this.classList.remove('is-invalid', 'is-valid') });
+//reset all forms on modal closing
+$(".modal").on("hidden.bs.modal", function () {
+    $(this).find("input.form-control").val("").end();
+    $(this).find("input.form-control").each(function () { this.classList.remove("is-invalid") });
 });
 
+//---Events Handling Section---
+
+//date type format transforming
+function formatDate(date) {
+    date = new Date(date);
+    let year = new Intl.DateTimeFormat("en", { year: "numeric" }).format(date);
+    let month = new Intl.DateTimeFormat("en", { month: "2-digit" }).format(date);
+    let day = new Intl.DateTimeFormat("en", { day: "2-digit" }).format(date);
+    return `${year}-${month}-${day}`
+}
+
+//on edit button click handler: save old row data => set them to input
 $(document).on("click", ".table-icon.edit-btn", function () {
-    let order = dataTable.row($(this).closest('tr')).data();
+    let order = dataTable.row($(this).closest("tr")).data();
     oldDateValue = formatDate(order.date);
     oldPriceValue = order.price.toString().replace(".", ",");
 
@@ -130,11 +140,12 @@ $(document).on("click", ".table-icon.edit-btn", function () {
     $("#updatingModal #price").val(oldPriceValue);
 });
 
+//on remove button click handler
 $(document).on("click", ".table-icon.remove-btn", function () {
-    let order = dataTable.row($(this).closest('tr')).data();
+    let order = dataTable.row($(this).closest("tr")).data();
     order.price = order.price.toString().replace(".", ",");
     bootbox.confirm({
-        message: 'Вы действительно хотите удалить заказ?',
+        message: "Вы действительно хотите удалить заказ?",
         buttons: {
             cancel: {
                 label: '<i class="fa fa-times"></i> Отмена'
@@ -147,27 +158,32 @@ $(document).on("click", ".table-icon.remove-btn", function () {
             if (result) {
                 $.ajax({
                     type: "POST",
-                    url: "/Orders/RemoveOrder",
+                    url: "/Order/RemoveOrder",
                     data: order,
                     success: function (resp) {
                         if (resp.status) {
                             dataTable.ajax.reload();
-                            toastr.success(resp.message, 'Успешная операция', { timeOut: 2000 });
+                            toastr.success(resp.message, "Успешная операция", { timeOut: toastrTimeout });
                         }
                         else {
-                            toastr.error(resp.message, 'Неудачная операция', { timeOut: 2000 });
+                            toastr.error(resp.message, "Неудачная операция", { timeOut: toastrTimeout });
                         }
                     },
-                    error: on_error
+                    error: function (err) {
+                        toastr.error("Не удается установить соединение с сервером", "Ошибка соединения с сервером", { timeOut: toastrTimeout });
+                    } 
                 });
             }
         }
     });
 });
 
+//on form submit button click handler
 $(".custom-form").submit(function (e) {
     e.preventDefault();
     var $form = $(this);
+    $form.find("input.form-control").each(function () { this.classList.remove("is-invalid") });
+
     if (validator($form)) {
         $.ajax({
             type: "POST",
@@ -176,11 +192,11 @@ $(".custom-form").submit(function (e) {
             success: function (resp) {
                 if (resp.status) {
                     dataTable.ajax.reload();
-                    toastr.success(resp.message, 'Успешная операция', { timeOut: 2000 });
+                    toastr.success(resp.message, "Успешная операция", { timeOut: toastrTimeout });
                     $(".modal").modal("hide");
                 }
                 else {
-                    toastr.error(resp.message, 'Неудачная операция', { timeOut: 2000 });
+                    toastr.error(resp.message, "Неудачная операция", { timeOut: toastrTimeout });
                     if (resp.model_state) {
                         for (field in resp.model_state) {
                             let errs = resp.model_state[field].errors;
@@ -192,7 +208,9 @@ $(".custom-form").submit(function (e) {
                     }
                 }
             },
-            error: on_error
+            error: function (err) {
+                toastr.error("Не удается установить соединение с сервером", "Ошибка соединения с сервером", { timeOut: toastrTimeout });
+            } 
         });
     }
 });

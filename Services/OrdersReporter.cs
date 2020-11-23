@@ -31,14 +31,20 @@ namespace OrdersReportApp.Services
 
         public async virtual Task<string> CreateReportAsync(ReportViewModel reportViewModel)
         {
-            return await Task.Run(() => CreateReport(reportViewModel));
+            try
+            {
+                return await Task.Run(() => CreateReport(reportViewModel));
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        // TODO: What if there are more conditions?
         public virtual string CreateReport(ReportViewModel reportViewModel)
         {
-            //Orders filtering section
-            // TODO: Implement more flexible behavior for filter rules declaring
+            // ---Orders Filtering Section---
+            // TODO: What if there are more conditions? Implement more flexible behavior for filter rules declaring.
             var lines = from gr in (from order in OrderDataAccess.GetOrders()
                                     where (reportViewModel.From == null || order.Date >= reportViewModel.From) &&
                                     (reportViewModel.To == null || order.Date <= reportViewModel.To)
@@ -50,39 +56,39 @@ namespace OrdersReportApp.Services
                             (from order in gr where order.Price > 5000 select order).Count()
                         };
 
-            // Excel file filling section
+            // ---Excel File Filling Section---
             // TODO: In current realization there is only one worksheet uses.
             // For more complex patterns we might use all existing worksheets.
-            int currentRowIndex = ParseXmlPattern().FirstOrDefault();
+            var currentRowIndex = ParseXmlPattern().FirstOrDefault();
             var wsheet = Excel.Workbook.Worksheets[0];
 
             foreach (var line in lines)
             {
-                for (int currentColIndex = 1; currentColIndex <= line.Count; currentColIndex++)    
+                for (int currentColIndex = 1; currentColIndex <= line.Count; currentColIndex++)
                     wsheet.Cells[currentRowIndex, currentColIndex].Value = line[currentColIndex - 1];
                 currentRowIndex++;
             }
 
-            //Styles declaring section
+            // ---Styles Declaring Section---
             wsheet.Cells.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
             wsheet.Cells.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
             wsheet.Column(1).Style.Numberformat.Format = DateTimeFormat;
             wsheet.Cells.AutoFitColumns();
 
-            //TODO: AutoFitColumns doesn't work for merged cells. Automate column width calculation on future
+            // TODO: AutoFitColumns doesn't work for merged cells. Automate column width calculation on future.
             for (int i = 2; i <= lines.Count(); i++)
                 wsheet.Column(i).Width = 15;
 
-            Random random = new Random(Guid.NewGuid().GetHashCode());
+            var random = new Random(Guid.NewGuid().GetHashCode());
             var path = Path.Combine(Directory.GetCurrentDirectory(), "Report_" + random.Next() + ".xlsx");
-            FileInfo reportFile = new FileInfo(path);
+            var reportFile = new FileInfo(path);
             Excel.SaveAs(reportFile);
             return reportFile.FullName;
         }
 
         protected virtual List<int> ParseXmlPattern()
         {
-            List<int> lastRowIndexes = new List<int>();
+            var lastRowIndexes = new List<int>();
             foreach (var worksheet in Xdoc.Element("document").Element("worksheets").Elements("worksheet"))
             {
                 var worksheetName = worksheet.Attribute("name")?.Value;

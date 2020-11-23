@@ -15,7 +15,7 @@ namespace OrdersReportApp.Tests
             Container.RegisterInstance<IConfiguration>(builder.Build());
             Container.RegisterType<IOrdersReporter, OrdersReporter>();
             Container.RegisterType<IOrderDataAccess, OrderDataAccess>();
-            Container.RegisterType<OrdersController>();
+            Container.RegisterType<OrderController>();
         }
     }
 }

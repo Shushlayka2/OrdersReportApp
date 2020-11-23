@@ -1,5 +1,5 @@
-﻿using OrdersReportApp.Models.Order;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using OrdersReportApp.Models.Order;
 
 namespace OrdersReportApp
 {

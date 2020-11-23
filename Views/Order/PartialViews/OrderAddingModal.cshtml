@@ -8,16 +8,16 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form class="custom-form" asp-action="AddOrder" asp-controller="Orders" asp-antiforgery="true" novalidate>
+            <form class="custom-form" asp-action="AddOrder" asp-controller="Order" asp-antiforgery="true" novalidate>
                 <div class="modal-body">
                     <div class="form-group">
                         <label asp-for="Date"></label>
-                        <input name="Date" type="date" class="form-control" asp-for="Date" required/>
+                        <input class="form-control" name="Date" type="date" asp-for="Date" required/>
                         <span class="invalid-feedback" asp-validation-for="Date"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="Price"></label>
-                        <input name="Price" type="text" class="form-control" asp-for="Price" required/>
+                        <input class="form-control" name="Price" type="text" asp-for="Price" required/>
                         <span class="invalid-feedback" asp-validation-for="Price"></span>
                     </div>
                 </div>

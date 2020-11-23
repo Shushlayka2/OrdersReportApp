@@ -9,14 +9,14 @@ namespace OrdersReportApp
     {
         public static void Main(string[] args)
         {
-            var logger = NLog.Web.NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
+            var Logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
             try
             {
                 CreateHostBuilder(args).Build().Run();
             }
             catch (Exception exception)
             {
-                logger.Error(exception, "Stopped program because of unhandled exception");
+                Logger.Error(exception, "Stopped program because of unhandled exception");
                 throw;
             }
             finally

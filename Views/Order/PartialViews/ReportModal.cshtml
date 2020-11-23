@@ -8,15 +8,15 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form asp-action="UploadReport" asp-controller="Orders" asp-antiforgery="true">
+            <form asp-action="UploadReport" asp-controller="Order" asp-antiforgery="true" novalidate>
                 <div class="modal-body">
                     <div class="form-group">
                         <label asp-for="From">Дата заказа с</label>
-                        <input type="date" class="form-control" asp-for="From" />
+                        <input class="form-control" type="date" asp-for="From" />
                     </div>
                     <div class="form-group">
                         <label asp-for="To">Дата заказа по</label>
-                        <input type="date" class="form-control" asp-for="To" />
+                        <input class="form-control" type="date" asp-for="To" />
                     </div>
                 </div>
                 <div class="modal-footer">

@@ -23,13 +23,12 @@ namespace OrdersReportApp
 
         public void ConfigureServices(IServiceCollection services)
         {
-            string connection = Configuration.GetConnectionString("DefaultConnection");
+            var connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(connection));
             services.AddTransient<IOrderDataAccess, OrderDataAccess>();
             services.AddTransient<IOrdersReporter, OrdersReporter>();
-            services.AddTransient<IOrderValidator, OrderValidator>();
-            services.AddControllersWithViews();
             services.AddAutoMapper(typeof(Startup));
+            services.AddControllersWithViews();
 
 #if DEBUG
             IMvcBuilder builder = services.AddRazorPages();
@@ -44,11 +43,10 @@ namespace OrdersReportApp
         {
             if (Environment.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                //app.UseDeveloperExceptionPage();
             }
             else
             {
-                app.UseExceptionHandler("/Orders/Error");
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
@@ -62,7 +60,7 @@ namespace OrdersReportApp
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Orders}/{action=Index}");
+                    pattern: "{controller=Order}/{action=Index}");
             });
         }
     }
