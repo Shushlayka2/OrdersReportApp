@@ -6,7 +6,7 @@ namespace OrdersReportApp.Models.Order
 {
     public interface IOrderDataAccess
     {
-        Task AddNewOrderAsync(NewOrderViewModel newOrder);
+        Task AddNewOrderAsync(Order order);
         Task UpdateOrderAsync(Order order);
         Task RemoveOrderAsync(Order order);
         List<Order> GetOrders();

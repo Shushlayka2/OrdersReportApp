@@ -1,10 +1,10 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using OrdersReportApp.Models.Order;
 using OrdersReportApp.Services;
 
@@ -27,7 +27,9 @@ namespace OrdersReportApp
             services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(connection));
             services.AddTransient<IOrderDataAccess, OrderDataAccess>();
             services.AddTransient<IOrdersReporter, OrdersReporter>();
+            services.AddTransient<IOrderValidator, OrderValidator>();
             services.AddControllersWithViews();
+            services.AddAutoMapper(typeof(Startup));
 
 #if DEBUG
             IMvcBuilder builder = services.AddRazorPages();

@@ -1,6 +1,4 @@
-﻿using OrdersReportApp.ViewModels;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,13 +13,8 @@ namespace OrdersReportApp.Models.Order
             Database = database;
         }
 
-        public async Task AddNewOrderAsync(NewOrderViewModel newOrder)
+        public async Task AddNewOrderAsync(Order order)
         {
-            var order = new Order() 
-            {
-                Date = DateTime.Parse(newOrder.Date),
-                Price = decimal.Parse(newOrder.Price)
-            };
             await Database.AddAsync(order);
             await Database.SaveChangesAsync();
         }

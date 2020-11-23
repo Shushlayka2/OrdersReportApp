@@ -168,7 +168,7 @@ $(document).on("click", ".table-icon.remove-btn", function () {
 $(".custom-form").submit(function (e) {
     e.preventDefault();
     var $form = $(this);
-    if (validator($form) && this.checkValidity()) {
+    if (validator($form)) {
         $.ajax({
             type: "POST",
             url: this.action,

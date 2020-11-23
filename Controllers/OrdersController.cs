@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OrdersReportApp.Models.Order;
 using OrdersReportApp.Services;
@@ -10,21 +11,27 @@ using System.Threading.Tasks;
 
 namespace OrdersReportApp.Controllers
 {
-    // TODO: Handle exception cases
     public class OrdersController : Controller
     {
         private readonly ILogger<OrdersController> Logger;
+        private readonly IMapper Mapper;
+
         protected IOrderDataAccess OrderDataAccess { get; }
+        protected IOrderValidator OrderValidator { get; }
         protected IOrdersReporter OrdersReporter { get; }
 
         public OrdersController(
+            IMapper mapper,
             IOrderDataAccess orderDataAccess,
             IOrdersReporter ordersReporter,
+            IOrderValidator orderValidator,
             ILogger<OrdersController> logger)
         {
             Logger = logger;
+            Mapper = mapper;
             OrderDataAccess = orderDataAccess;
             OrdersReporter = ordersReporter;
+            OrderValidator = orderValidator;
         }
 
         [HttpGet]
@@ -48,7 +55,8 @@ namespace OrdersReportApp.Controllers
                 if (!ModelState.IsValid)
                     return Json(new { status = false, message = "Ошибка валидации", model_state = ModelState });
 
-                await OrderDataAccess.AddNewOrderAsync(newOrder);
+                var order = Mapper.Map<Order>(newOrder);
+                await OrderDataAccess.AddNewOrderAsync(order);
                 return Json(new { status = true, message = "Заказ успешно добавлен." });
             }
             catch (Exception ex)
@@ -59,13 +67,15 @@ namespace OrdersReportApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateOrder(Order order)
+        public async Task<IActionResult> UpdateOrder(UpdatingOrderViewModel updatingOrder)
         {
             try
             {
+                OrderValidator.PositivePriseChecking(ModelState, updatingOrder);
                 if (!ModelState.IsValid)
                     return Json(new { status = false, message = "Ошибка валидации", model_state = ModelState });
 
+                var order = Mapper.Map<Order>(updatingOrder);
                 await OrderDataAccess.UpdateOrderAsync(order);
                 return Json(new { status = true, message = "Заказ успешно изменен." });
             }
