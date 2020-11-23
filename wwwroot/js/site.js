@@ -81,7 +81,6 @@ function updateValidation($form) {
     let newDateValue = $form.find(`input[name=Date]`)[0].value;
     if (oldDateValue == newDateValue && oldPriceValue == newPriceValue) {
         toastr.warning("Новые значения не отличаются от старых", 'Неудачная операция', { timeOut: 2000 });
-        $form[0].classList.remove('was-validated');
         return false;
     }
     return true;
@@ -97,9 +96,17 @@ function validator($form) {
     if ($form.find("input[name=Price]")[0].value < 0) {
         $form.find(`input[name=Price]`)[0].classList.add("is-invalid");
         $form.find("span.field-validation-valid[data-valmsg-for='Price']").text("Общая сумма не может быть отрицательной");
-        $form[0].classList.remove('was-validated');
         isValid = false;
     }
+
+    $form.find("input[required]").each(function () {
+        if (!this.value) {
+            let name = $(this).attr("name");
+            this.classList.add("is-invalid");
+            $form.find(`span.field-validation-valid[data-valmsg-for='${name}']`).text("Поле не может быть пустым");
+            isValid = false;
+        }
+    });
 
     return isValid;
 }
@@ -111,7 +118,6 @@ function on_error(resp) {
 $(".modal").on('hidden.bs.modal', function () {
     $(this).find("input.form-control").val('').end();
     $(this).find('input.form-control').each(function () { this.classList.remove('is-invalid', 'is-valid') });
-    $(this).find('form')[0].classList.remove('was-validated');
 });
 
 $(document).on("click", ".table-icon.edit-btn", function () {
@@ -162,35 +168,31 @@ $(document).on("click", ".table-icon.remove-btn", function () {
 $(".custom-form").submit(function (e) {
     e.preventDefault();
     var $form = $(this);
-    if (validator($form)) {
-        this.classList.add('was-validated');
-        if (this.checkValidity() === true) {
-            $.ajax({
-                type: "POST",
-                url: this.action,
-                data: $(this).serialize(),
-                success: function (resp) {
-                    if (resp.status) {
-                        dataTable.ajax.reload();
-                        toastr.success(resp.message, 'Успешная операция', { timeOut: 2000 });
-                        $(".modal").modal("hide");
-                    }
-                    else {
-                        toastr.error(resp.message, 'Неудачная операция', { timeOut: 2000 });
-                        if (resp.model_state) {
-                            $('form.was-validated').each(function () { this.classList.remove('was-validated') });
-                            for (field in resp.model_state) {
-                                let errs = resp.model_state[field].errors;
-                                if (errs.length != 0) {
-                                    $form.find(`input[name=${field}]`)[0].classList.add("is-invalid");
-                                    $form.find(`span.field-validation-valid[data-valmsg-for='${field}']`).text(errs[0].errorMessage);
-                                }
+    if (validator($form) && this.checkValidity()) {
+        $.ajax({
+            type: "POST",
+            url: this.action,
+            data: $(this).serialize(),
+            success: function (resp) {
+                if (resp.status) {
+                    dataTable.ajax.reload();
+                    toastr.success(resp.message, 'Успешная операция', { timeOut: 2000 });
+                    $(".modal").modal("hide");
+                }
+                else {
+                    toastr.error(resp.message, 'Неудачная операция', { timeOut: 2000 });
+                    if (resp.model_state) {
+                        for (field in resp.model_state) {
+                            let errs = resp.model_state[field].errors;
+                            if (errs.length != 0) {
+                                $form.find(`input[name=${field}]`)[0].classList.add("is-invalid");
+                                $form.find(`span.field-validation-valid[data-valmsg-for='${field}']`).text(errs[0].errorMessage);
                             }
                         }
                     }
-                },
-                error: on_error
-            });
-        }
+                }
+            },
+            error: on_error
+        });
     }
 });
