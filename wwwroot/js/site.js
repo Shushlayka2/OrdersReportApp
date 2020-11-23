@@ -73,28 +73,56 @@ function formatDate(date) {
     return `${year}-${month}-${day}`
 }
 
-function on_succes(resp) {
-    console.log("test");
-    if (resp.status) {
-        dataTable.ajax.reload();
-        toastr.success(resp.message, 'Успешная операция', { timeOut: 2000 });
+var oldPriceValue = "";
+var oldDateValue = "";
+
+function updateValidation($form) {
+    let newPriceValue = $form.find(`input[name=Price]`)[0].value;
+    let newDateValue = $form.find(`input[name=Date]`)[0].value;
+    if (oldDateValue == newDateValue && oldPriceValue == newPriceValue) {
+        toastr.warning("Новые значения не отличаются от старых", 'Неудачная операция', { timeOut: 2000 });
+        $form[0].classList.remove('was-validated');
+        return false;
     }
-    else {
-        toastr.error(resp.message, 'Неудачная операция', { timeOut: 2000 });
+    return true;
+}
+
+function validator($form) {
+    let isValid = true;
+
+    if ($form.closest('.modal').attr('id') == "updatingModal") {
+        isValid &= updateValidation($form);
     }
-    $(".modal").modal("hide");
+
+    if ($form.find("input[name=Price]")[0].value < 0) {
+        $form.find(`input[name=Price]`)[0].classList.add("is-invalid");
+        $form.find("span.field-validation-valid[data-valmsg-for='Price']").text("Общая сумма не может быть отрицательной");
+        $form[0].classList.remove('was-validated');
+        isValid = false;
+    }
+
+    return isValid;
 }
 
 function on_error(resp) {
     toastr.error('Не удается установить соединение с сервером.', 'Ошибка соединения с сервером', { timeOut: 2000 });
 }
 
+$(".modal").on('hidden.bs.modal', function () {
+    $(this).find("input.form-control").val('').end();
+    $(this).find('input.form-control').each(function () { this.classList.remove('is-invalid', 'is-valid') });
+    $(this).find('form')[0].classList.remove('was-validated');
+});
+
 $(document).on("click", ".table-icon.edit-btn", function () {
     let order = dataTable.row($(this).closest('tr')).data();
+    oldDateValue = formatDate(order.date);
+    oldPriceValue = order.price.toString().replace(".", ",");
+
     $("#updatingModal #id").val(order.id);
-    $("#updatingModal #date").val(formatDate(order.date));
-    $("#updatingModal #price").val(order.price.toString().replace(".", ","));
-})
+    $("#updatingModal #date").val(oldDateValue);
+    $("#updatingModal #price").val(oldPriceValue);
+});
 
 $(document).on("click", ".table-icon.remove-btn", function () {
     let order = dataTable.row($(this).closest('tr')).data();
@@ -131,24 +159,38 @@ $(document).on("click", ".table-icon.remove-btn", function () {
     });
 });
 
-$("#updatingForm").submit(function (e) {
+$(".custom-form").submit(function (e) {
     e.preventDefault();
-    $.ajax({
-        type: "POST",
-        url: this.action,
-        data: $(this).serialize(),
-        success: on_succes,
-        error: on_error
-    });
-});
-
-$("#addingForm").submit(function (e) {
-    e.preventDefault();
-    $.ajax({
-        type: "POST",
-        url: this.action,
-        data: $(this).serialize(),
-        success: on_succes,
-        error: on_error
-    });
+    var $form = $(this);
+    if (validator($form)) {
+        this.classList.add('was-validated');
+        if (this.checkValidity() === true) {
+            $.ajax({
+                type: "POST",
+                url: this.action,
+                data: $(this).serialize(),
+                success: function (resp) {
+                    if (resp.status) {
+                        dataTable.ajax.reload();
+                        toastr.success(resp.message, 'Успешная операция', { timeOut: 2000 });
+                        $(".modal").modal("hide");
+                    }
+                    else {
+                        toastr.error(resp.message, 'Неудачная операция', { timeOut: 2000 });
+                        if (resp.model_state) {
+                            $('form.was-validated').each(function () { this.classList.remove('was-validated') });
+                            for (field in resp.model_state) {
+                                let errs = resp.model_state[field].errors;
+                                if (errs.length != 0) {
+                                    $form.find(`input[name=${field}]`)[0].classList.add("is-invalid");
+                                    $form.find(`span.field-validation-valid[data-valmsg-for='${field}']`).text(errs[0].errorMessage);
+                                }
+                            }
+                        }
+                    }
+                },
+                error: on_error
+            });
+        }
+    }
 });

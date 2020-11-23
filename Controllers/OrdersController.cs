@@ -45,6 +45,9 @@ namespace OrdersReportApp.Controllers
         {
             try
             {
+                if (!ModelState.IsValid)
+                    return Json(new { status = false, message = "Ошибка валидации", model_state = ModelState });
+
                 await OrderDataAccess.AddNewOrderAsync(newOrder);
                 return Json(new { status = true, message = "Заказ успешно добавлен." });
             }
@@ -60,6 +63,9 @@ namespace OrdersReportApp.Controllers
         {
             try
             {
+                if (!ModelState.IsValid)
+                    return Json(new { status = false, message = "Ошибка валидации", model_state = ModelState });
+
                 await OrderDataAccess.UpdateOrderAsync(order);
                 return Json(new { status = true, message = "Заказ успешно изменен." });
             }

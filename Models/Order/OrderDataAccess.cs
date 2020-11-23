@@ -1,4 +1,5 @@
 ﻿using OrdersReportApp.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,8 +19,8 @@ namespace OrdersReportApp.Models.Order
         {
             var order = new Order() 
             {
-                Date = newOrder.Date,
-                Price = newOrder.Price
+                Date = DateTime.Parse(newOrder.Date),
+                Price = decimal.Parse(newOrder.Price)
             };
             await Database.AddAsync(order);
             await Database.SaveChangesAsync();
