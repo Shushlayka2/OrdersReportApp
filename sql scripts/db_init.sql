@@ -9,7 +9,7 @@ GO
 IF NOT EXISTS (SELECT 1 FROM sysobjects WHERE name = 'orders' and xtype = 'U')
 	CREATE TABLE Orders (
 		Id UNIQUEIDENTIFIER PRIMARY KEY default NEWID(),
-		Price SMALLMONEY NOT NULL CHECK (Price >= 0),
+		Price DECIMAL(19,2) NOT NULL CHECK (Price >= 0),
 		Date DATE NOT NULL
 	)
 GO

@@ -1,4 +1,4 @@
-﻿using System;
+﻿using OrdersReportApp.ViewModels;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,8 +14,13 @@ namespace OrdersReportApp.Models.Order
             Database = database;
         }
 
-        public async Task AddNewOrderAsync(Order order)
+        public async Task AddNewOrderAsync(NewOrderViewModel newOrder)
         {
+            var order = new Order() 
+            {
+                Date = newOrder.Date,
+                Price = newOrder.Price
+            };
             await Database.AddAsync(order);
             await Database.SaveChangesAsync();
         }
@@ -30,6 +35,11 @@ namespace OrdersReportApp.Models.Order
         {
             Database.Remove(order);
             await Database.SaveChangesAsync();
+        }
+
+        public async Task<List<Order>> GetOrdersAsync()
+        {
+            return await Task.Run(() => GetOrders());
         }
 
         public List<Order> GetOrders()

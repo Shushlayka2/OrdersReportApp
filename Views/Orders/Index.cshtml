@@ -1,0 +1,32 @@
+﻿@{
+    ViewData["Title"] = "Заказы";
+}
+<h2 id="title">OrdersReportApp</h2>
+<div id="btn_line" class="row">
+    <button id="addModalbtn" type="button" class="btn btn-primary" data-toggle="modal" data-target="#addingModal"><i class="fas fa-plus"></i> Новый Заказ</button>
+    <button id="reportModalbtn" type="button" class="btn btn-secondary" data-toggle="modal" data-target="#reportModal"><i class="far fa-file-excel"></i> Оформить отчет</button>
+</div>
+
+<table id="ordersTable" class="table table-hover" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th scope="col">Идентификатор заказа</th>
+            <th scope="col">Дата заказа</th>
+            <th scope="col">Сумма заказа</th>
+            <th></th>
+        </tr>
+    </thead>
+</table>
+
+@{ await Html.RenderPartialAsync("PartialViews/OrderAddingModal"); }
+@{ await Html.RenderPartialAsync("PartialViews/OrderUpdateModal"); }
+@{ await Html.RenderPartialAsync("PartialViews/ReportModal"); }
+
+@section Scripts {
+    <script src="~/lib/moment/moment.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/plug-ins/1.10.21/dataRender/datetime.js"></script>
+    <script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.4.0/bootbox.min.js"></script>
+}

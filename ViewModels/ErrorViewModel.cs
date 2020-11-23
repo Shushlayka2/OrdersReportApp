@@ -1,6 +1,6 @@
 using System;
 
-namespace OrdersReportApp.ViewModel
+namespace OrdersReportApp.ViewModels
 {
     public class ErrorViewModel
     {

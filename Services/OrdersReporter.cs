@@ -17,7 +17,6 @@ namespace OrdersReportApp.Services
     {
         protected ExcelPackage Excel { get; }
         protected XDocument Xdoc { get; }
-        protected string ReportsDirName { get; }
         protected string DateTimeFormat { get; }
         protected IOrderDataAccess OrderDataAccess { get; }
         public OrdersReporter(IConfiguration configuration, IOrderDataAccess orderDataAccess)
@@ -26,7 +25,6 @@ namespace OrdersReportApp.Services
             OrderDataAccess = orderDataAccess;
             var configurationSection = configuration.GetSection("AppSettings");
             var patternPath = configurationSection.GetValue<string>("PatternPath");
-            ReportsDirName = configurationSection.GetValue<string>("ReportsDir");
             DateTimeFormat = configurationSection.GetValue<string>("DateTimeFormat");
             Xdoc = XDocument.Load(patternPath);
         }
@@ -76,7 +74,7 @@ namespace OrdersReportApp.Services
                 wsheet.Column(i).Width = 15;
 
             Random random = new Random(Guid.NewGuid().GetHashCode());
-            var path = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\" + ReportsDirName + @"\Report_" + random.Next() + ".xlsx");
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "Report_" + random.Next() + ".xlsx");
             FileInfo reportFile = new FileInfo(path);
             Excel.SaveAs(reportFile);
             return reportFile.FullName;

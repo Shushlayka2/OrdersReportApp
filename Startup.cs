@@ -28,6 +28,7 @@ namespace OrdersReportApp
             services.AddTransient<IOrderDataAccess, OrderDataAccess>();
             services.AddTransient<IOrdersReporter, OrdersReporter>();
             services.AddControllersWithViews();
+
 #if DEBUG
             IMvcBuilder builder = services.AddRazorPages();
             if (Environment.IsDevelopment())
@@ -37,7 +38,7 @@ namespace OrdersReportApp
 #endif
         }
 
-        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app)
         {
             if (Environment.IsDevelopment())
             {

@@ -1,14 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace OrdersReportApp.Models.Order
+namespace OrdersReportApp.ViewModels
 {
-    public class Order
+    public class NewOrderViewModel
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; set; }
-
         [Required(ErrorMessage = "Не указана сумма заказа")]
         public decimal Price { get; set; }
 

@@ -1,0 +1,33 @@
+﻿@model OrdersReportApp.ViewModels.NewOrderViewModel
+<div id="addingModal" class="modal fade" tabindex="1" role="dialog" aria-labelledby="addingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="addingModalLabel" class="modal-title">Добавление заказа</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="addingForm" asp-action="AddOrder" asp-controller="Orders" asp-antiforgery="true">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label asp-for="Date"></label>
+                        <input type="date" class="form-control" asp-for="Date" />
+                        <span asp-validation-for="Date"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Price"></label>
+                        <input type="text" class="form-control" asp-for="Price" />
+                        <span asp-validation-for="Price"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Добавить</button>
+                        <button type="reset" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
