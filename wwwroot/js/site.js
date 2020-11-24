@@ -161,7 +161,7 @@ $(document).on("click", ".table-icon.remove-btn", function () {
                     url: "/Order/RemoveOrder",
                     data: order,
                     success: function (resp) {
-                        if (resp.status) {
+                        if (resp.status == 0) {
                             dataTable.ajax.reload();
                             toastr.success(resp.message, "Успешная операция", { timeOut: toastrTimeout });
                         }
@@ -190,16 +190,16 @@ $(".custom-form").submit(function (e) {
             url: this.action,
             data: $(this).serialize(),
             success: function (resp) {
-                if (resp.status) {
+                if (resp.status == 0) {
                     dataTable.ajax.reload();
                     toastr.success(resp.message, "Успешная операция", { timeOut: toastrTimeout });
                     $(".modal").modal("hide");
                 }
                 else {
                     toastr.error(resp.message, "Неудачная операция", { timeOut: toastrTimeout });
-                    if (resp.model_state) {
-                        for (field in resp.model_state) {
-                            let errs = resp.model_state[field].errors;
+                    if (resp.modelState) {
+                        for (field in resp.modelState) {
+                            let errs = resp.modelState[field].errors;
                             if (errs.length != 0) {
                                 $form.find(`input[name=${field}]`)[0].classList.add("is-invalid");
                                 $form.find(`span.field-validation-valid[data-valmsg-for='${field}']`).text(errs[0].errorMessage);

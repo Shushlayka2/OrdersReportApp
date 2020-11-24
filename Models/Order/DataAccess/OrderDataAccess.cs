@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,14 +20,7 @@ namespace OrdersReportApp.Models.Order
 
         public async Task<List<Order>> GetOrdersAsync()
         {
-            try
-            {
-                return await Task.Run(() => GetOrders());
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            return await Task.Run(() => GetOrders());
         }
 
         public void AddOrder(Order order)
@@ -39,15 +31,8 @@ namespace OrdersReportApp.Models.Order
 
         public async Task AddOrderAsync(Order order)
         {
-            try
-            {
-                await Database.AddAsync(order);
-                await Database.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            await Database.AddAsync(order);
+            await Database.SaveChangesAsync();
         }
 
         public void UpdateOrder(Order order)
@@ -58,15 +43,8 @@ namespace OrdersReportApp.Models.Order
 
         public async Task UpdateOrderAsync(Order order)
         {
-            try
-            {
-                Database.Orders.Update(order);
-                await Database.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            Database.Orders.Update(order);
+            await Database.SaveChangesAsync();
         }
 
         public void RemoveOrder(Order order)
@@ -77,15 +55,8 @@ namespace OrdersReportApp.Models.Order
 
         public async Task RemoveOrderAsync(Order order)
         {
-            try
-            {
-                Database.Remove(order);
-                await Database.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            Database.Remove(order);
+            await Database.SaveChangesAsync();
         }
     }
 }

@@ -9,7 +9,10 @@ namespace OrdersReportApp.Models.Order.Validators
         {
             try
             {
-                return (decimal)value > 0;
+                if (value == null)
+                    return false;
+                else
+                    return (decimal)value > 0;
             }
             catch (InvalidCastException)
             {

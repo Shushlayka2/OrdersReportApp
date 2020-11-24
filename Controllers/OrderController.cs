@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using OrdersReportApp.Models;
 using OrdersReportApp.Models.Order;
+using OrdersReportApp.Models.Order.Models;
 using OrdersReportApp.Services;
 using OrdersReportApp.ViewModels;
 using System;
@@ -50,7 +52,7 @@ namespace OrdersReportApp.Controllers
             try
             {
                 var orders = await OrderDataAccess.GetOrdersAsync();
-                return Json(new { data = orders });
+                return Json(new OrdersTable(orders));
             }
             catch (Exception ex)
             {
@@ -65,17 +67,17 @@ namespace OrdersReportApp.Controllers
             try
             {
                 if (!ModelState.IsValid)
-                    return Json(new { status = false, message = "Ошибка валидации", model_state = ModelState });
+                    return Json(new RequestState(Status.Fail, "Ошибка валидации", ModelState));
 
                 var order = Mapper.Map<Order>(newOrder);
                 await OrderDataAccess.AddOrderAsync(order);
 
-                return Json(new { status = true, message = "Заказ успешно добавлен." });
+                return Json(new RequestState(Status.Success, "Заказ успешно добавлен"));
             }
             catch (Exception ex)
             {
                 Logger.LogError(ex.Message);
-                return Json(new { success = false, message = "Не удалось выполнить требуемую операцию." });
+                return Json(new { status = false, message = "Не удалось выполнить требуемую операцию." });
             }
         }
 
@@ -85,17 +87,17 @@ namespace OrdersReportApp.Controllers
             try
             {
                 if (!ModelState.IsValid)
-                    return Json(new { status = false, message = "Ошибка валидации", model_state = ModelState });
+                    return Json(new RequestState(Status.Fail, "Ошибка валидации", ModelState));
 
                 var order = Mapper.Map<Order>(updatingOrder);
                 await OrderDataAccess.UpdateOrderAsync(order);
 
-                return Json(new { status = true, message = "Заказ успешно изменен." });
+                return Json(new RequestState(Status.Success, "Заказ успешно изменен"));
             }
             catch (Exception ex)
             {
                 Logger.LogError(ex.Message);
-                return Json(new { success = false, message = "Не удалось выполнить требуемую операцию." });
+                return Json(new RequestState(Status.Fail, "Не удалось выполнить требуемую операцию"));
             }
         }
 
@@ -106,12 +108,12 @@ namespace OrdersReportApp.Controllers
             {
                 await OrderDataAccess.RemoveOrderAsync(order);
 
-                return Json(new { status = true, message = "Заказ успешно удален." });
+                return Json(new RequestState(Status.Success, "Заказ успешно удален"));
             }
             catch (Exception ex)
             {
                 Logger.LogError(ex.Message);
-                return Json(new { success = false, message = "Не удалось выполнить требуемую операцию." });
+                return Json(new RequestState(Status.Fail, "Не удалось выполнить требуемую операцию"));
             }
         }
 
@@ -122,7 +124,7 @@ namespace OrdersReportApp.Controllers
             {
                 var path = await OrdersReporter.CreateReportAsync(reportViewModel);
                 var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None, 4096, FileOptions.DeleteOnClose);
-                
+
                 return File(
                     fileStream: fs,
                     contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
